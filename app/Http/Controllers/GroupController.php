@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
+use Auth;
 use Illuminate\Http\Request;
 
 class GroupController extends Controller
@@ -11,7 +13,11 @@ class GroupController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+        $groups = $user->groups;
+
+        return view('groups.index');
+
     }
 
     /**
@@ -19,7 +25,7 @@ class GroupController extends Controller
      */
     public function create()
     {
-        //
+        return view('groups.create');
     }
 
     /**
@@ -27,7 +33,19 @@ class GroupController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user_id = Auth::id();
+
+        $validated = $request->validate([
+            'name' => ['string', 'required', 'min:1', 'max:50'],
+        ]);
+
+        $group = new Group();
+        $group->name = $validated['name'];
+        $group->save();
+
+        $group->users()->attach($user_id);
+
+        return redirect()->route('groups.index');
     }
 
     /**
@@ -35,7 +53,18 @@ class GroupController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = Auth::user();
+
+        $users_groups = $user->groups();
+
+        foreach ($users_groups as $group) {
+            if ($group->id == $id) {
+                return view('groups.show', ['group' => $group]);
+            }
+        }
+
+        return abort(403);
+
     }
 
     /**
@@ -43,7 +72,17 @@ class GroupController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = Auth::user();
+
+        $users_groups = $user->groups();
+
+        foreach ($users_groups as $group) {
+            if ($id == $group->id) {
+                return view('groups.edit', ['group' => $group]);
+            }
+        }
+
+        return abort(403);
     }
 
     /**
@@ -51,7 +90,23 @@ class GroupController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        
+        $validated = $request->validate([
+            'name' => ['string', 'required', 'min:1', 'max:50'],
+        ]);
+
+        $users_groups = Auth::user()->groups();
+        $group = Group::findOrFail($id);
+
+        foreach ($users_groups as $group) {
+            if ($id == $group->id) {
+                $group->name = $validated['name'];
+                $group->update();
+            }
+        }
+
+        return abort(403);
+
     }
 
     /**
@@ -59,6 +114,16 @@ class GroupController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        
+        $users_groups = Auth::user()->groups();
+        $group = Group::findOrFail($id);
+
+        foreach ($users_groups as $group) {
+            if ($id == $group->id) {
+                $group->delete();
+            }
+        }
+
+        return abort(403);
     }
 }
