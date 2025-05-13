@@ -14,9 +14,12 @@ Route::controller(LoginController::class)->name('login.')->group(function() {
     Route::post('login', 'auth')->name('auth');
 });
 
-Route::middleware(AuthMiddleware::class)->resource('users', UserController::class);
+Route::middleware(AuthMiddleware::class)->resource('users', UserController::class)->except(['store', 'create']);
+Route::post('users.store', [UserController::class, 'store'])->name('users.store');
+
 Route::middleware(AuthMiddleware::class)->resource('groups', GroupController::class);
-Route::middleware(AuthMiddleware::class)->prefix('groups/{group}')->resource('tasks', TaskController::class);
+
+Route::middleware(AuthMiddleware::class)->resource('groups/{group}/tasks', TaskController::class);
 Route::middleware(AuthMiddleware::class)->prefix('groups/{group}/tasks/{task}/comments')->name('comments.')->controller(CommentController::class)
     ->group(function() {
         Route::get('/', 'index')->name('index');
