@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('text', 500);
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('group_id');
             $table->unsignedBigInteger('task_id');
 
+            $table->foreign('group_id')->references('id')->on('groups');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('task_id')->references('id')->on('tasks');
             $table->timestamps();
