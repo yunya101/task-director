@@ -21,7 +21,6 @@ class LoginController extends Controller
 
         $valideted = $request->validate([
             'email' => ['string', 'required', 'email'],
-            'name' => ['string', 'required', 'min:5', 'max:50'],
             'password' => ['string', 'required', 'min:5', 'max:50'],
         ]);
 
@@ -29,5 +28,17 @@ class LoginController extends Controller
         if (Auth::attempt($valideted)) {
             return redirect()->route('groups.index');
         }
+
+        return back();
+    }
+
+    public function logout(Request $request) {
+
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login.login');
     }
 }

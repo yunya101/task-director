@@ -12,12 +12,13 @@ Route::controller(LoginController::class)->name('login.')->group(function() {
     Route::get('login', 'login')->name('login');
     Route::get('register', 'register')->name('register');
     Route::post('login', 'auth')->name('auth');
+    Route::post('logout', 'logout')->name('logout');
 });
 
 Route::middleware(AuthMiddleware::class)->resource('users', UserController::class)->except(['store', 'create']);
 Route::post('users.store', [UserController::class, 'store'])->name('users.store');
 
-Route::middleware(AuthMiddleware::class)->resource('groups', GroupController::class);
+Route::middleware(AuthMiddleware::class)->resource('groups', GroupController::class)->except(['show']);
 
 Route::middleware(AuthMiddleware::class)->resource('groups/{group}/tasks', TaskController::class);
 Route::middleware(AuthMiddleware::class)->prefix('groups/{group}/tasks/{task}/comments')->name('comments.')->controller(CommentController::class)

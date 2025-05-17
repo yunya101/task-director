@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\User;
+use Auth;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -14,8 +16,13 @@ class TaskController extends Controller
     {
         
         $tasks = Task::where('group_id', $group)->get();
+        $executors = [];
+        
+        foreach ($tasks as $task) {
+            $executors[$task->id] = User::find($task->executor);
+        }
 
-        return view('tasks.index');
+        return view('tasks.index', ['tasks' => $tasks, 'group' => $group, 'executors' => $executors]);
     }
 
     /**
@@ -31,7 +38,7 @@ class TaskController extends Controller
      */
     public function store(Request $request, $group)
     {
-        
+        $user_id = Auth::id();
         $validated = $request->validate([
             'title' => ['string', 'required', 'min:1', 'max:50'],
             'description' => ['string', 'nullable', 'max:500'],
@@ -40,6 +47,7 @@ class TaskController extends Controller
 
         $task = new Task($validated);
         $task->group_id = $group;
+        $task->executor = $user_id;
 
         $task->save();
 

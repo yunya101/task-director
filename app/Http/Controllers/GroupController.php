@@ -16,7 +16,7 @@ class GroupController extends Controller
         $user = Auth::user();
         $groups = $user->groups;
 
-        return view('groups.index');
+        return view('groups.index', ['groups' => $groups]);
 
     }
 
@@ -46,25 +46,6 @@ class GroupController extends Controller
         $group->users()->attach($user_id);
 
         return redirect()->route('groups.index');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $user = Auth::user();
-
-        $users_groups = $user->groups();
-
-        foreach ($users_groups as $group) {
-            if ($group->id == $id) {
-                return view('groups.show', ['group' => $group]);
-            }
-        }
-
-        return abort(403);
-
     }
 
     /**

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('deadline');
             $table->unsignedBigInteger('group_id');
             $table->unsignedBigInteger('executor');
+            $table->timestamps();
 
             $table->foreign('group_id')->references('id')->on('groups');
             $table->foreign('executor')->references('id')->on('users');
