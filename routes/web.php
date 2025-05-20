@@ -6,9 +6,10 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AuthMiddleware;
+use App\Http\Middleware\LoginMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::controller(LoginController::class)->name('login.')->group(function() {
+Route::controller(LoginController::class)->name('login.')->middleware(LoginMiddleware::class)->group(function() {
     Route::get('login', 'login')->name('login');
     Route::get('register', 'register')->name('register');
     Route::post('login', 'auth')->name('auth');

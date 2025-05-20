@@ -27,8 +27,9 @@
 
         </div>
 
-        <div class="row text-center">
+        <div class="row text-center mt-5">
             <div class="col-6 offset-3">
+                <h2>Создание задачи</h2>
                 <form action="{{ route('tasks.store', $group) }}" method="post">
                     @csrf
                     <label for="">Название задачи</label><br>

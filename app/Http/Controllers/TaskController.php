@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
 use App\Models\Task;
 use App\Models\User;
 use Auth;
@@ -60,20 +61,17 @@ class TaskController extends Controller
     public function show($group, $task)
     {
         $task = Task::findOrFail($task);
+        $executor = User::find($task->executor);
+        $members = Group::find($group)->users;
 
-        return view('tasks.show');
+        foreach ($members as $index => $user) {
+            if ($user->id == $executor->id) {
+                unset($members[$index]);
+            }
+        }
+
+        return view('tasks.show', compact(['task', 'group', 'executor', 'members']));
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($group, $task)
-    {
-        $task = Task::findOrFail($task);
-
-        return view('tasks.edit');
-    }
-
     /**
      * Update the specified resource in storage.
      */
@@ -85,11 +83,14 @@ class TaskController extends Controller
             'title' => ['string', 'required', 'min:1', 'max:50'],
             'description' => ['string', 'nullable', 'max:500'],
             'deadline' => ['date', 'required'],
+            'executor' => ['string', 'required'],
         ]);
+
 
         $task->title = $validated['title'];
         $task->description = $validated['description'];
         $task->deadline = $validated['deadline'];
+        $task->executor = $validated['executor'];
 
         $task->update();
 

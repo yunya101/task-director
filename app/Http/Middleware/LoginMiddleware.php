@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AuthMiddleware
+class LoginMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,8 +17,8 @@ class AuthMiddleware
     public function handle(Request $request, Closure $next): Response
     {
 
-        if (!Auth::check()) {
-            return redirect()->route('login.auth');
+        if (Auth::check() && request()->path() !== 'logout') {
+            return redirect()->route('groups.index');
         }
         
         return $next($request);

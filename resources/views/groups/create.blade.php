@@ -12,6 +12,7 @@
                     @csrf
                     <label for="">Введите название группы</label><br>
                     <input type="text" name="name" placeholder="name" required><br>
+                    <input type="text" name="members" placeholder="members"><br>
                     <button type="submit" class="btn btn-primary mt-3">Создать</button>
                 </form>
 

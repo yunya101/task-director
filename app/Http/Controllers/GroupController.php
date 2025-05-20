@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Group;
+use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -33,17 +34,26 @@ class GroupController extends Controller
      */
     public function store(Request $request)
     {
-        $user_id = Auth::id();
+        $user_ids = array();
+        $user_ids[] = Auth::id();
 
         $validated = $request->validate([
             'name' => ['string', 'required', 'min:1', 'max:50'],
+            'members' => ['string', 'nullable'],
         ]);
+
+        $members = explode(' ', $validated['members']);
 
         $group = new Group();
         $group->name = $validated['name'];
         $group->save();
 
-        $group->users()->attach($user_id);
+        foreach ($members as $name) {
+            $user = User::where('name', $name)->first();
+            $user_ids[] = $user->id;
+        }
+
+        $group->users()->attach($user_ids);
 
         return redirect()->route('groups.index');
     }
