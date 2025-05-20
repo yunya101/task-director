@@ -8,11 +8,14 @@
         <div class="row">
 
             @if (!$groups->isEmpty())
+
+            <h1>Мои группы</h1>
                 
                 @foreach ($groups as $group)
                     
                     <div class="col-3 border">
                         <a href="{{ route('tasks.index', [$group->id]) }}">{{ $group->name }}</a>
+                        <p>Кол-во участников: {{$group->count_members}}</p>
                     </div>
 
                 @endforeach

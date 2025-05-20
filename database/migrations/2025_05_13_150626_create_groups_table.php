@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->unsignedInteger('count_members')->default(1);
             $table->timestamps();
         });
     }

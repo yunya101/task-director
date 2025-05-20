@@ -28,6 +28,12 @@
                     <button type="submit" class="btn btn-primary mt-3">Сохранить изменения</button>
                 </form>
 
+                <form action="{{ route('tasks.destroy', ['task' => $task, 'group' => $group]) }}" method="post">
+                    @csrf
+                    @method('delete')
+                    <button type="submit" class="btn btn-danger">Удалить задачу</button>
+                </form>
+
             </div>
         </div>
     </div>

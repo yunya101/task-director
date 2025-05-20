@@ -42,18 +42,31 @@ class GroupController extends Controller
             'members' => ['string', 'nullable'],
         ]);
 
-        $members = explode(' ', $validated['members']);
+        $members = $validated['members'] == "" ? [] : explode(' ', $validated['members']);
 
         $group = new Group();
         $group->name = $validated['name'];
+        $group->count_members = 1;
         $group->save();
+        $count = 0;
 
-        foreach ($members as $name) {
-            $user = User::where('name', $name)->first();
-            $user_ids[] = $user->id;
+        if (!empty($members)) {
+
+            foreach ($members as $name) {
+                $user = User::where('name', $name)->first();
+
+                if ($user !== null) {
+                    $user_ids[] = $user->id;
+                    $count += 1;
+                }
+
+            }
         }
 
         $group->users()->attach($user_ids);
+        $group->count_members = $group->count_members + $count;
+
+        $group->update();
 
         return redirect()->route('groups.index');
     }
@@ -81,7 +94,7 @@ class GroupController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        
+
         $validated = $request->validate([
             'name' => ['string', 'required', 'min:1', 'max:50'],
         ]);
@@ -105,7 +118,7 @@ class GroupController extends Controller
      */
     public function destroy(string $id)
     {
-        
+
         $users_groups = Auth::user()->groups();
         $group = Group::findOrFail($id);
 

@@ -21,7 +21,7 @@ Route::post('users.store', [UserController::class, 'store'])->name('users.store'
 
 Route::middleware(AuthMiddleware::class)->resource('groups', GroupController::class)->except(['show']);
 
-Route::middleware(AuthMiddleware::class)->resource('groups/{group}/tasks', TaskController::class);
+Route::middleware(AuthMiddleware::class)->resource('groups/{group}/tasks', TaskController::class)->except(['edit']);
 Route::middleware(AuthMiddleware::class)->prefix('groups/{group}/tasks/{task}/comments')->name('comments.')->controller(CommentController::class)
     ->group(function() {
         Route::get('/', 'index')->name('index');
