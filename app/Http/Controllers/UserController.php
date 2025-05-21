@@ -26,21 +26,14 @@ class UserController extends Controller
     {
 
         $valideted = $request->validate([
-            'email' => ['string', 'required', 'email'],
+            'email' => ['string', 'required', 'email', 'unique:users'],
             'name' => ['string', 'required', 'min:4', 'max:50'],
-            'password' => ['string', 'required', 'min:5', 'max:50'],
+            'password' => ['string', 'required', 'min:5', 'max:50', 'confirmed'],
         ]);
 
-        $user = new User();
-        $user->name = $valideted['name'];
-        $user->email = $valideted['email'];
-        $user->password = bcrypt($valideted['password']);
+        User::create($valideted);
 
-        if ($user->save()) {
-            return redirect()->route('login.login');
-        }
-
-        return back()->withErrors(['msg' => 'Такой email уже существует']);
+        return redirect()->route('login.login');
         
     }
 
@@ -82,27 +75,17 @@ class UserController extends Controller
             'password' => ['string', 'required', 'min:5', 'max:50'],
         ]);
 
-        $user->name = $valideted['name'];
-        $user->email = $valideted['email'];
-        $user->password = bcrypt($valideted['password']);
-
-        $user->update();
-
-        return back()->with('msg', 'Успешно');
+        $user->update($valideted);
 
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy()
     {
-        $real_user = Auth::user();
-        $user = User::findOrFail($id);
-
-        if ($user->id !== $real_user->id) {
-            return back()->withErrors(['msg' => 'У вас нет прав для изменения данных']);
-        }
+        $user = Auth::user();
+        Auth::logout();
 
         $user->delete();
 

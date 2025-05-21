@@ -42,7 +42,25 @@
         </nav>
     </header>
 
-    <main class="mt-5">@yield('main')</main>
+    <main class="mt-5">
+        @if ($errors->any())
+
+        <div class="container">
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+
+                        <li>{{ $error }}</li>
+
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+
+        @endif
+        @yield('main')
+    </main>
+
 
     <footer class="bg-primary b-auto fixed-bottom">
         <div class="container">

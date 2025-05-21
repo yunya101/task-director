@@ -29,7 +29,7 @@ class LoginController extends Controller
             return redirect()->route('groups.index');
         }
 
-        return back();
+        return back()->withErrors(['Wrong email or password']);
     }
 
     public function logout(Request $request) {
