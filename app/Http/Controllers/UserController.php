@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Auth;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -31,9 +32,12 @@ class UserController extends Controller
             'password' => ['string', 'required', 'min:5', 'max:50', 'confirmed'],
         ]);
 
-        User::create($valideted);
+        $user = User::create($valideted);
+        event(new Registered($user));
 
-        return redirect()->route('login.login');
+        Auth::login($user);
+
+        return redirect()->route('verification.notice');
         
     }
 
