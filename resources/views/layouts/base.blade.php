@@ -33,6 +33,11 @@
                             </li>
                         </ul>
                     </div>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('invitations.index') }}">Уведомления</a>
+                        </li>
+                    </ul>
                     <form action="{{ route('login.logout') }}" method="post">
                         @csrf
                         <button type="submit" class="btn">Выйти</button>
@@ -45,17 +50,17 @@
     <main class="mt-5">
         @if ($errors->any())
 
-        <div class="container">
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
+            <div class="container">
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
 
-                        <li>{{ $error }}</li>
+                            <li>{{ $error }}</li>
 
-                    @endforeach
-                </ul>
+                        @endforeach
+                    </ul>
+                </div>
             </div>
-        </div>
 
         @endif
         @yield('main')

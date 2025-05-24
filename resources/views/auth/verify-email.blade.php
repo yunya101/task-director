@@ -10,7 +10,7 @@
         </div>
 
         <p>Не получили письмо?</p>
-        <form action="" method="post">
+        <form action="{{ route('verification.send') }}" method="post">
             @csrf
             <button class="btn btn-primary">Отправить еще раз</button>
         </form>

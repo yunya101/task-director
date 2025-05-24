@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Group;
 use App\Models\Task;
 use App\Models\User;
@@ -50,19 +51,21 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($group, $task)
+    public function show($group_id, $task)
     {
         $task = Task::findOrFail($task);
         $executor = User::find($task->executor);
-        $members = Group::find($group)->users;
+        $group = Group::findOrFail($group_id);
+        $row_members = $group->users()->wherePivot('is_active', true)->get();
+        $members = array();
 
-        foreach ($members as $index => $user) {
-            if ($user->id == $executor->id) {
-                unset($members[$index]);
-            }
+        foreach ($row_members as $user) {
+            $members[$user->id] = $user;
         }
 
-        return view('tasks.show', compact(['task', 'group', 'executor', 'members']));
+        $comments = Comment::where('task_id', $task->id)->get();
+
+        return view('tasks.show', compact(['task', 'group', 'executor', 'members', 'comments']));
     }
     /**
      * Update the specified resource in storage.

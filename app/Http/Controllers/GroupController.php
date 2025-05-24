@@ -15,7 +15,7 @@ class GroupController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $groups = $user->groups;
+        $groups = $user->groups()->wherePivot('is_active', true)->get();
 
         return view('groups.index', ['groups' => $groups]);
 
@@ -35,7 +35,6 @@ class GroupController extends Controller
     public function store(Request $request)
     {
         $user_ids = array();
-        $user_ids[] = Auth::id();
 
         $validated = $request->validate([
             'name' => ['string', 'required', 'min:1', 'max:50'],
@@ -52,19 +51,18 @@ class GroupController extends Controller
 
         if (!empty($members)) {
 
-            foreach ($members as $name) {
-                $user = User::where('name', $name)->first();
+            foreach ($members as $email) {
+                $user = User::where('email', $email)->first();
 
                 if ($user !== null) {
                     $user_ids[] = $user->id;
-                    $count += 1;
                 }
 
             }
         }
 
         $group->users()->attach($user_ids);
-        $group->count_members = $group->count_members + $count;
+        $group->users()->attach(Auth::id(), ['is_active' => true]);
 
         $group->update();
 
